@@ -28,16 +28,15 @@ async function listMovies() {
     }
     const data = await res.json();
     // Comprovem que hi hagi resposta i que sigui un array
-    if (!data.results || !Array.isArray(data.results)) {
+    if (!data || !Array.isArray(data)) {
       throw new Error('API did not return an array');
     }
-    const movies = data.results.map((movie) => ({
+    return data.map((movie) => ({
       name: movie.title,
       director: movie.director,
       release: movie.release_date,
       episodeID: movie.episode_id,
     }));
-    return movies;
   } catch (error) {
     console.error('Error:', error);
     return [];
@@ -56,16 +55,20 @@ async function listEvenMoviesSorted() {
     .sort(_compareByEpisodeId);
 }
 
-function getMovieInfo(id) {
-  return fetch(`https://swapi.info/api/films/${id}/`)
-    .then((res) => res.json())
-    .then((movie) => ({
-      name: movie.title,
-      episodeID: movie.episode_id,
-      characters: movie.characters,
-      director: movie.director,
-      release: movie.release_date,
-    }));
+function getMovieInfo(episodeId) {
+  return fetch(`https://swapi.info/api/films/`)
+      .then((res) => res.json())
+      .then((movies) => {
+        const movie = movies.filter(movie => movie.episode_id == episodeId)[0]; // !!! Pregutnar aixo an pablo
+        return {
+          name: movie.title,
+          episodeID: movie.episode_id,
+          characters: movie.characters,
+          director: movie.director,
+          release: movie.release_date
+        }
+      });
+
 }
 
 function getCharacterName(url) {
@@ -82,8 +85,8 @@ async function getMovieCharacters(id) {
   return movie;
 }
 
-async function getMovieCharactersAndHomeworlds(id) {
-  const movie = await getMovieInfo(id);
+async function getMovieCharactersAndHomeworlds(episodeId) {
+  const movie = await getMovieInfo(episodeId);
   movie.characters = await _getCharacterNamesAndHomeWorlds(movie);
   return movie;
 }

@@ -142,9 +142,10 @@ body {
   height: 100%;
   opacity: 0.4;
   z-index: -1;
-  background: url('/public/assets/battle-bg.jpg') no-repeat center;
+  background: url("../../../m6-uf3-t1-star-wars-part2-aleixamils/public/assets/battle-bg.jpg") no-repeat center;
   background-size: cover;
 }
+
 .movie__title {
   margin-top: 0;
   font-size: 42px;
